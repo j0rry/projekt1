@@ -23,6 +23,7 @@ class Program
             p.Draw();
             foreach(Bush b in bushes)
                 b.Draw();
+            p.DrawHealthBar();
             Raylib.EndDrawing();
 
         }

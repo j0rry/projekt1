@@ -8,9 +8,10 @@ class Player
     public int Radius { get; set; } = 30;
     public Raylib_cs.Color Color { get; set; } = Color.Blue;
 
+    public int MaxHp { get; set; } = 100;
     public int Hp { get; set; } = 100;
     public int Speed { get; set; } = 5;
-    public int FireRate { get; set; } = 10; 
+    public int FireRate { get; set; } = 10;
     public int Damage { get; set; } = 20;
     public int RotateSpeed { get; set; } = 5;
 
@@ -81,6 +82,8 @@ class Player
         {
             Shoot();
         }
+
+        if (Raylib.IsKeyPressed(KeyboardKey.Space)) Hp--;
     }
 
     public void Shoot()
@@ -98,8 +101,15 @@ class Player
     }
 
 
-    public void DrawHealthBar(){
-        Raylib.DrawRectangle(10 - 5, Raylib.GetScreenHeight() - 65, 310, 60, Color.Black);
-        Raylib.DrawRectangle(10, Raylib.GetScreenHeight() - 60, 300, 50, Color.Red);
+    public void DrawHealthBar()
+    {
+        /*Räkna ut healthbar */
+        int maxWidth = 300;
+        float healthProcentage = (float)Hp / MaxHp;
+        float healthBarWidth = maxWidth * healthProcentage;
+
+
+        Raylib.DrawRectangle(10 - 5, Raylib.GetScreenHeight() - 65, maxWidth + 10, 60, Color.Black);
+        Raylib.DrawRectangle(10, Raylib.GetScreenHeight() - 60, (int)healthBarWidth, 50, Color.Red);
     }
 }

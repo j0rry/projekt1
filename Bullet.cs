@@ -1,5 +1,4 @@
 using Raylib_cs;
-using System.Numerics;
 
 class Bullet
 {
@@ -7,6 +6,7 @@ class Bullet
     public float X { get; set; }
     public float Y { get; set; }
     public float Angle { get; set; }
+    public float Radius { get; set; } = 8;
 
     public Bullet(float startX, float startY, float angle)
     {
@@ -17,7 +17,7 @@ class Bullet
 
     public void Draw()
     {
-        Raylib.DrawCircle((int)X, (int)Y, 8, Color.Yellow);
+        Raylib.DrawCircle((int)X, (int)Y, Radius, Color.Yellow);
     }
 
     public void Update()

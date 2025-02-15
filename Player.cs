@@ -72,8 +72,8 @@ class Player
         if (Raylib.IsKeyDown(KeyboardKey.D)) X += Speed;
         if (Raylib.IsKeyDown(KeyboardKey.A)) X -= Speed;
 
-        if (Raylib.IsKeyDown(KeyboardKey.Left)) RotationAngle -= RotateSpeed;
-        if (Raylib.IsKeyDown(KeyboardKey.Right)) RotationAngle += RotateSpeed;
+        if (Raylib.IsKeyDown(KeyboardKey.Left) || Raylib.IsKeyDown(KeyboardKey.H)) RotationAngle -= RotateSpeed;
+        if (Raylib.IsKeyDown(KeyboardKey.Right) || Raylib.IsKeyDown(KeyboardKey.L)) RotationAngle += RotateSpeed;
 
         X = Math.Clamp(X, 0 + Radius, Raylib.GetScreenWidth() - Radius);
         Y = Math.Clamp(Y, 0 + Radius, Raylib.GetScreenHeight() - Radius);
@@ -88,9 +88,10 @@ class Player
 
     public void Shoot()
     {
-        float currentTime = (float)Raylib.GetTime();
-        if (currentTime - lastShotTime >= 1.0f / FireRate)
+        float currentTime = (float)Raylib.GetTime(); // Hämta tiden i sekunder
+        if (currentTime - lastShotTime >= 1.0f / FireRate) // Om det gått 1/FireRate sekunder sedan senaste skottet
         {
+            // Räkna ut positionen för skottet
             float gunX = X + GunOffsetX * MathF.Cos(RotationAngle * MathF.PI / 180) - GunOffsetY * MathF.Sin(RotationAngle * MathF.PI / 180);
             float gunY = Y + GunOffsetX * MathF.Sin(RotationAngle * MathF.PI / 180) + GunOffsetY * MathF.Cos(RotationAngle * MathF.PI / 180);
 
@@ -103,13 +104,19 @@ class Player
 
     public void DrawHealthBar()
     {
-        /*Räkna ut healthbar */
+        // Rita ut en healthbar
         int maxWidth = 300;
         float healthProcentage = (float)Hp / MaxHp;
         float healthBarWidth = maxWidth * healthProcentage;
 
-
         Raylib.DrawRectangle(10 - 5, Raylib.GetScreenHeight() - 65, maxWidth + 10, 60, Color.Black);
         Raylib.DrawRectangle(10, Raylib.GetScreenHeight() - 60, (int)healthBarWidth, 50, Color.Red);
     }
+
+    public bool Collides(Enemy enemy)
+    {
+        // Kollar om fienden kolliderar med spelaren
+        return MathF.Sqrt((X - enemy.X) * (X - enemy.X) + (Y - enemy.Y) * (Y - enemy.Y)) < Radius + enemy.Radius;
+    }
+
 }

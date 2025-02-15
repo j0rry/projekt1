@@ -5,25 +5,58 @@ class Program
     static void Main()
     {
 
-        Raylib.InitWindow(1200,800, "Sigma game");
+        Raylib.InitWindow(1200, 800, "Sigma game");
         Player p = new();
-        Bush[] bushes = new Bush[5];
-        for (int i = 0; i < bushes.Length; i++)
+        List<Enemy> enemies = new();
+        for (int i = 0; i < 5; i++)
         {
-            bushes[i] = new Bush();
+            enemies.Add(new Enemy());
         }
 
-
-        while(!Raylib.WindowShouldClose()){
+        while (!Raylib.WindowShouldClose())
+        {
             p.Update();
+
+            if (p.Hp <= 0)
+            {
+                p = new();
+            }
+
+            foreach (var enemy in enemies)
+            {
+                enemy.Update(p);
+                if (p.Collides(enemy))
+                {
+                    p.Hp -= 1;
+                }
+
+                if (p.Bullets.Count > 0)
+                {
+                    foreach (var bullet in p.Bullets)
+                    {
+                        if (enemy.BulletCollision(bullet))
+                        {
+                            enemy.Hp -= p.Damage;
+                            p.Bullets.Remove(bullet);
+                            break;
+                        }
+                    }
+                }
+
+                if (enemy.Hp <= 0)
+                {
+                    enemies.Remove(enemy);
+                    enemies.Add(new Enemy());
+                    break;
+                }
+            }
 
             Raylib.SetTargetFPS(60);
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.Green);
             p.Draw();
-            foreach(Bush b in bushes)
-                b.Draw();
             p.DrawHealthBar();
+            enemies.ForEach(enemy => enemy.Draw());
             Raylib.EndDrawing();
 
         }
@@ -35,12 +68,3 @@ class Program
 }
 
 
-class Bush{
-    public int Radius = Random.Shared.Next(10, 50);
-    public int X = Random.Shared.Next(Raylib.GetScreenWidth());
-    public int Y = Random.Shared.Next(Raylib.GetScreenHeight());
-
-    public void Draw(){
-        Raylib.DrawCircle(X,Y, Radius, Color.DarkGreen);
-    }
-}

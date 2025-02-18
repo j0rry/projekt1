@@ -5,7 +5,7 @@ class Program
     static void Main()
     {
 
-        Raylib.InitWindow(1200, 800, "Sigma game");
+        Raylib.InitWindow(1200, 800, "Top down shooter");
         Player p = new();
         List<Enemy> enemies = new();
         for (int i = 0; i < 5; i++)

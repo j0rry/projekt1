@@ -72,8 +72,8 @@ class Player
         if (Raylib.IsKeyDown(KeyboardKey.D)) X += Speed;
         if (Raylib.IsKeyDown(KeyboardKey.A)) X -= Speed;
 
-        if (Raylib.IsKeyDown(KeyboardKey.Left) || Raylib.IsKeyDown(KeyboardKey.H)) RotationAngle -= RotateSpeed;
-        if (Raylib.IsKeyDown(KeyboardKey.Right) || Raylib.IsKeyDown(KeyboardKey.L)) RotationAngle += RotateSpeed;
+        if (Raylib.IsKeyDown(KeyboardKey.Left) || Raylib.IsKeyDown(KeyboardKey.J)) RotationAngle -= RotateSpeed;
+        if (Raylib.IsKeyDown(KeyboardKey.Right) || Raylib.IsKeyDown(KeyboardKey.K)) RotationAngle += RotateSpeed;
 
         X = Math.Clamp(X, 0 + Radius, Raylib.GetScreenWidth() - Radius);
         Y = Math.Clamp(Y, 0 + Radius, Raylib.GetScreenHeight() - Radius);

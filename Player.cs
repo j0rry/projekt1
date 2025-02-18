@@ -8,6 +8,7 @@ class Player
     public int Radius { get; set; } = 30;
     public Raylib_cs.Color Color { get; set; } = Color.Blue;
 
+    public int Ammo = 100;
     public int MaxHp { get; set; } = 100;
     public int Hp { get; set; } = 100;
     public int Speed { get; set; } = 5;
@@ -63,6 +64,8 @@ class Player
         {
             bullet.Draw();
         }
+
+        Raylib.DrawText($"Ammo: {Ammo}", 0, 0, 40, Color.White);
     }
 
     void PlayerInput()
@@ -71,6 +74,8 @@ class Player
         if (Raylib.IsKeyDown(KeyboardKey.S)) Y += Speed;
         if (Raylib.IsKeyDown(KeyboardKey.D)) X += Speed;
         if (Raylib.IsKeyDown(KeyboardKey.A)) X -= Speed;
+
+        if (Raylib.IsKeyDown(KeyboardKey.R)) Ammo = 100;
 
         if (Raylib.IsKeyDown(KeyboardKey.Left) || Raylib.IsKeyDown(KeyboardKey.J)) RotationAngle -= RotateSpeed;
         if (Raylib.IsKeyDown(KeyboardKey.Right) || Raylib.IsKeyDown(KeyboardKey.K)) RotationAngle += RotateSpeed;
@@ -89,7 +94,7 @@ class Player
     public void Shoot()
     {
         float currentTime = (float)Raylib.GetTime(); // Hämta tiden i sekunder
-        if (currentTime - lastShotTime >= 1.0f / FireRate) // Om det gått 1/FireRate sekunder sedan senaste skottet
+        if (currentTime - lastShotTime >= 1.0f / FireRate && Ammo > 0) // Om det gått 1/FireRate sekunder sedan senaste skottet
         {
             // Räkna ut positionen för skottet
             float gunX = X + GunOffsetX * MathF.Cos(RotationAngle * MathF.PI / 180) - GunOffsetY * MathF.Sin(RotationAngle * MathF.PI / 180);
@@ -98,6 +103,7 @@ class Player
             Bullet bullet = new Bullet(gunX, gunY, RotationAngle);
             Bullets.Add(bullet);
             lastShotTime = currentTime;
+            Ammo--;
         }
     }
 
@@ -111,6 +117,11 @@ class Player
 
         Raylib.DrawRectangle(10 - 5, Raylib.GetScreenHeight() - 65, maxWidth + 10, 60, Color.Black);
         Raylib.DrawRectangle(10, Raylib.GetScreenHeight() - 60, (int)healthBarWidth, 50, Color.Red);
+    }
+
+    public bool IsDead()
+    {
+        return Hp <= 0;
     }
 
     public bool Collides(Enemy enemy)

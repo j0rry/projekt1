@@ -10,9 +10,11 @@ class Enemy
     public int Radius { get; set; } = 20;
     public int Speed { get; set; } = 2;
 
+    public Texture2D texture;
+
     public Enemy()
     {
-
+        texture = Raylib.LoadTexture("enemy.png");
     }
 
     public void Draw()
@@ -40,5 +42,10 @@ class Enemy
     public bool BulletCollision(Bullet bullet)
     {
         return MathF.Sqrt((bullet.X - X) * (bullet.X - X) + (bullet.Y - Y) * (bullet.Y - Y)) < Radius + bullet.Radius;
+    }
+
+    public bool IsDead()
+    {
+        return Hp <= 0;
     }
 }

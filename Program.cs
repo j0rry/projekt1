@@ -6,50 +6,17 @@ class Program
     {
 
         Raylib.InitWindow(1200, 800, "Top down shooter");
-        Player p = new();
         List<Enemy> enemies = new();
+        Player p = new();
         for (int i = 0; i < 5; i++)
-        {
             enemies.Add(new Enemy());
-        }
+
 
         while (!Raylib.WindowShouldClose())
         {
+            EnemyCheck(enemies, p);
             p.Update();
-
-            if (p.Hp <= 0)
-            {
-                p = new();
-            }
-
-            foreach (var enemy in enemies)
-            {
-                enemy.Update(p);
-                if (p.Collides(enemy))
-                {
-                    p.Hp -= 1;
-                }
-
-                if (p.Bullets.Count > 0)
-                {
-                    foreach (var bullet in p.Bullets)
-                    {
-                        if (enemy.BulletCollision(bullet))
-                        {
-                            enemy.Hp -= p.Damage;
-                            p.Bullets.Remove(bullet);
-                            break;
-                        }
-                    }
-                }
-
-                if (enemy.Hp <= 0)
-                {
-                    enemies.Remove(enemy);
-                    enemies.Add(new Enemy());
-                    break;
-                }
-            }
+            if (p.IsDead()) p = new();
 
             Raylib.SetTargetFPS(60);
             Raylib.BeginDrawing();
@@ -64,6 +31,42 @@ class Program
         Raylib.CloseWindow();
 
 
+    }
+
+
+    static void EnemyCheck(List<Enemy> enemies, Player p)
+    {
+
+        foreach (var enemy in enemies)
+        {
+            enemy.Update(p);
+            if (p.Collides(enemy))
+            {
+                p.Hp -= 1;
+            }
+
+            // Ta bort bullet och health från enemy
+            if (p.Bullets.Count > 0)
+            {
+                foreach (var bullet in p.Bullets)
+                {
+                    if (enemy.BulletCollision(bullet))
+                    {
+                        enemy.Hp -= p.Damage;
+                        p.Bullets.Remove(bullet);
+                        break;
+                    }
+                }
+            }
+
+            // Check om enemy är död
+            if (enemy.IsDead())
+            {
+                enemies.Remove(enemy);
+                enemies.Add(new Enemy());
+                break;
+            }
+        }
     }
 }
 

@@ -26,17 +26,13 @@ class Player
     public float RotationAngle { get; set; }
     private float lastShotTime = 0;
 
+    public int KillCount { get; set; } = 0;
+
     public Player()
     {
         texture = Raylib.LoadTexture("player.png");
     }
 
-    private (float, float) CalculateGunPosition()
-    {
-        float gunX = X + GunOffsetX * MathF.Cos(RotationAngle * MathF.PI / 180) - GunOffsetY * MathF.Sin(RotationAngle * MathF.PI / 180);
-        float gunY = Y + GunOffsetX * MathF.Sin(RotationAngle * MathF.PI / 180) + GunOffsetY * MathF.Cos(RotationAngle * MathF.PI / 180);
-        return (gunX, gunY);
-    }
 
     public void Update()
     {
@@ -58,7 +54,6 @@ class Player
 
         Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, RotationAngle, Color.White);
 
-        (float gunX, float gunY) = CalculateGunPosition();
 
         foreach (var bullet in Bullets) // Rita alla bullets
         {
@@ -66,6 +61,7 @@ class Player
         }
 
         Raylib.DrawText($"Ammo: {Ammo}", 0, 0, 40, Color.White);
+        Raylib.DrawText($"Kill Count: {KillCount}", 0, 50, 40, Color.White);
     }
 
     void PlayerInput()

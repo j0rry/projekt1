@@ -1,4 +1,5 @@
-﻿using Raylib_cs;
+﻿using MongoDB.Bson.Serialization.Conventions;
+using Raylib_cs;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -7,6 +8,7 @@ class Program
 {
     static string playerName = "";
     static bool isEnteringName = false;
+    static bool isScoreboard = true;
 
     const string path = "scoreboard.json";
 
@@ -21,7 +23,15 @@ class Program
 
         while (!Raylib.WindowShouldClose())
         {
-            if (isEnteringName)
+            if (isScoreboard)
+            {
+                ShowScoreboard();
+                if (Raylib.IsKeyPressed(KeyboardKey.Space))
+                {
+                    isScoreboard = !isScoreboard;
+                }
+            }
+            else if (isEnteringName)
             {
                 AskUsername(ref playerName, () =>
                 {
@@ -43,8 +53,6 @@ class Program
                     IsGameOver = true;
                     isEnteringName = true;
                 }
-
-                if(Raylib.IsKeyDown(KeyboardKey.L)) ShowScoreboard();
 
                 Raylib.SetTargetFPS(60);
                 Raylib.BeginDrawing();
@@ -81,8 +89,10 @@ class Program
         Raylib.EndDrawing();
     }
 
-    static void SaveData(Player p) {
-        var playerData = new PlayerData{
+    static void SaveData(Player p)
+    {
+        var playerData = new PlayerData
+        {
             Name = playerName,
             Kills = p.KillCount
         };
@@ -91,8 +101,10 @@ class Program
         File.WriteAllText(path, jsonString);
     }
 
-    static void ShowScoreboard(){
-        if(File.Exists(path)){
+    static void ShowScoreboard()
+    {
+        if (File.Exists(path))
+        {
             string jsonString = File.ReadAllText(path);
             var playerData = JsonSerializer.Deserialize<PlayerData>(jsonString);
 

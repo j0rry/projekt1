@@ -14,7 +14,7 @@ class Enemy
 
     public Enemy()
     {
-        texture = Raylib.LoadTexture("enemy.png");
+        //texture = Raylib.LoadTexture("enemy.png");
     }
 
     public void Draw()

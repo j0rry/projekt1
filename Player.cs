@@ -8,7 +8,7 @@ class Player
     public int Radius { get; set; } = 30;
     public Raylib_cs.Color Color { get; set; } = Color.Blue;
 
-    public int Ammo = 100;
+    public int Ammo = 9999;
     public int MaxHp { get; set; } = 100;
     public int Hp { get; set; } = 100;
     public int Speed { get; set; } = 5;
@@ -117,7 +117,7 @@ class Player
 
     public bool IsDead()
     {
-        return Hp <= 0;
+        return Hp <= 0; // Kollar om spelaren är död
     }
 
     public bool Collides(Enemy enemy)

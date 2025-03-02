@@ -1,11 +1,14 @@
 ﻿using Raylib_cs;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 
 class Program
 {
     static string playerName = "";
     static bool isEnteringName = false;
+
+    const string path = "scoreboard.json";
 
     static void Main()
     {
@@ -22,6 +25,7 @@ class Program
             {
                 AskUsername(ref playerName, () =>
                 {
+                    SaveData(p);
                     p = new();
                     isEnteringName = false;
                     IsGameOver = false;
@@ -39,6 +43,8 @@ class Program
                     IsGameOver = true;
                     isEnteringName = true;
                 }
+
+                if(Raylib.IsKeyDown(KeyboardKey.L)) ShowScoreboard();
 
                 Raylib.SetTargetFPS(60);
                 Raylib.BeginDrawing();
@@ -73,6 +79,29 @@ class Program
         Raylib.ClearBackground(Color.Blue);
         Raylib.DrawText(input, 400, 350, 20, Color.Black);
         Raylib.EndDrawing();
+    }
+
+    static void SaveData(Player p) {
+        var playerData = new PlayerData{
+            Name = playerName,
+            Kills = p.KillCount
+        };
+
+        string jsonString = JsonSerializer.Serialize(playerData);
+        File.WriteAllText(path, jsonString);
+    }
+
+    static void ShowScoreboard(){
+        if(File.Exists(path)){
+            string jsonString = File.ReadAllText(path);
+            var playerData = JsonSerializer.Deserialize<PlayerData>(jsonString);
+
+            Raylib.BeginDrawing();
+            Raylib.ClearBackground(Color.Black);
+            Raylib.DrawText($"Name: {playerData.Name}", 400, 300, 20, Color.White);
+            Raylib.DrawText($"Kills: {playerData.Kills}", 400, 350, 20, Color.White);
+            Raylib.EndDrawing();
+        }
     }
 
 

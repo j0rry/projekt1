@@ -37,7 +37,11 @@ class Player
     public void Update()
     {
         PlayerInput();
+
+        // Tar bort alla Bullet som är utanför skärmen
         Bullets.RemoveAll(bullet => bullet.X < 0 || bullet.X > Raylib.GetScreenWidth() || bullet.Y < 0 || bullet.Y > Raylib.GetScreenHeight());
+
+        // Updatera Bullet
         foreach (var bullet in Bullets)
         {
             bullet.Update();
@@ -50,6 +54,8 @@ class Player
 
         Rectangle sourceRec = new Rectangle(0, 0, texture.Width, texture.Height);
         Rectangle destRec = new Rectangle(X, Y, texture.Width * Scale, texture.Height * Scale);
+        
+        // Ursprungspunkten för rotation, Som är centrerad på spelaren i texturen.
         Vector2 origin = new Vector2((texture.Width * Scale / 2) - 27, texture.Height * Scale / 2);
 
         Raylib.DrawTexturePro(texture, sourceRec, destRec, origin, RotationAngle, Color.White);
@@ -66,6 +72,7 @@ class Player
 
     void PlayerInput()
     {
+        // Kontroller
         if (Raylib.IsKeyDown(KeyboardKey.W)) Y -= Speed;
         if (Raylib.IsKeyDown(KeyboardKey.S)) Y += Speed;
         if (Raylib.IsKeyDown(KeyboardKey.D)) X += Speed;
@@ -76,6 +83,7 @@ class Player
         if (Raylib.IsKeyDown(KeyboardKey.Left) || Raylib.IsKeyDown(KeyboardKey.J)) RotationAngle -= RotateSpeed;
         if (Raylib.IsKeyDown(KeyboardKey.Right) || Raylib.IsKeyDown(KeyboardKey.K)) RotationAngle += RotateSpeed;
 
+        // Låser spelaren så den inte kan gå utanför spelplannen
         X = Math.Clamp(X, 0 + Radius, Raylib.GetScreenWidth() - Radius);
         Y = Math.Clamp(Y, 0 + Radius, Raylib.GetScreenHeight() - Radius);
 
@@ -83,8 +91,6 @@ class Player
         {
             Shoot();
         }
-
-        if (Raylib.IsKeyPressed(KeyboardKey.Space)) Hp--;
     }
 
     public void Shoot()
@@ -106,11 +112,12 @@ class Player
 
     public void DrawHealthBar()
     {
-        // Rita ut en healthbar
+        // Räkna ut healthbar
         int maxWidth = 300;
         float healthProcentage = (float)Hp / MaxHp;
         float healthBarWidth = maxWidth * healthProcentage;
 
+        // Rita ut healthbar
         Raylib.DrawRectangle(10 - 5, Raylib.GetScreenHeight() - 65, maxWidth + 10, 60, Color.Black);
         Raylib.DrawRectangle(10, Raylib.GetScreenHeight() - 60, (int)healthBarWidth, 50, Color.Red);
     }

@@ -1,4 +1,5 @@
 using Raylib_cs;
+using System.Numerics;
 
 class Enemy
 {
@@ -19,6 +20,7 @@ class Enemy
 
     public void Draw()
     {
+        // Rita enemy
         Raylib.DrawCircle(X, Y, Radius, Color.Red);
     }
 
@@ -29,23 +31,29 @@ class Enemy
 
     public void FollowPlayer(Player player)
     {
+
+        // Räkna ut avståndet mellan spelaren och enemy
         float distance = MathF.Sqrt(MathF.Pow(X - player.X, 2) + MathF.Pow(Y - player.Y, 2));
 
+        // Stannar den är för nära
         if (distance < player.Radius)
             return;
 
+        // Beräkna vinkeln mellan fienden och spelaren.
         float angle = MathF.Atan2(player.Y - Y, player.X - X);
+
+        // Flyttar enemys position baserad på den beräknade vinkeln.
         X += (int)(MathF.Cos(angle) * Speed);
         Y += (int)(MathF.Sin(angle) * Speed);
     }
 
     public bool BulletCollision(Bullet bullet)
     {
-        return MathF.Sqrt((bullet.X - X) * (bullet.X - X) + (bullet.Y - Y) * (bullet.Y - Y)) < Radius + bullet.Radius;
+        return MathF.Sqrt((bullet.X - X) * (bullet.X - X) + (bullet.Y - Y) * (bullet.Y - Y)) < Radius + bullet.Radius; // Checkar om enemy nuddar bullet.
     }
 
     public bool IsDead()
     {
-        return Hp <= 0;
+        return Hp <= 0; // Kollar om död
     }
 }

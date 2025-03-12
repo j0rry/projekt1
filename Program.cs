@@ -1,7 +1,4 @@
 ﻿using Raylib_cs;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
 
 class Program
@@ -10,6 +7,7 @@ class Program
     static string playerName = "";
     static bool isEnteringName = false;
     static bool isScoreboard = true;
+    static List<PlayerData> scores = GetScore();
 
     const string path = "scoreboard.json";
 
@@ -37,6 +35,7 @@ class Program
                 {
                     // Sparar spelarens score samt återställer spelets tillstånd.
                     SaveData(p);
+                    scores = GetScore();
                     p = new();
                     isEnteringName = false;
                     IsGameOver = false;
@@ -138,35 +137,38 @@ class Program
         }
     }
 
-    // Metod för att visa scoreboard
-    static void ShowScoreboard()
+    static List<PlayerData> GetScore()
     {
         if (File.Exists(path))
         {
             try
             {
-                // läser json data från filen
                 string jsonString = File.ReadAllText(path);
-                // Deserialiserar JSON data till en lista av PlayerData objekt
-                var playerDataList = JsonSerializer.Deserialize<List<PlayerData>>(jsonString);
-
-                // Sorterar listan efter antal kills i fallande ordning och tar de 10 bästa resultaten
-                var topScores = playerDataList.OrderByDescending(p => p.Kills).Take(10).ToList();
-
-
-                int yPosition = 300;
-                // Ritar varje spelares namn och antal kills
-                foreach (var playerData in topScores)
-                {
-                    Raylib.DrawText($"{playerData.Name} - Kills: {playerData.Kills}", 400, yPosition, 20, Color.White);
-                    yPosition += 30;
-                }
-
+                List<PlayerData> playerDataList = JsonSerializer.Deserialize<List<PlayerData>>(jsonString).ToList();
+                System.Console.WriteLine("Getting score..");
+                return playerDataList;
             }
-            catch (JsonException ex)
+            catch (JsonException e)
             {
-                Console.WriteLine($"Error reading JSON: {ex.Message}");
+                System.Console.WriteLine(e);
             }
+        }
+        return new List<PlayerData>();
+    }
+
+    // Metod för att visa scoreboard
+    static void ShowScoreboard(List<PlayerData> scores)
+    {
+        // Sorterar listan efter antal kills i fallande ordning och tar de 10 bästa resultaten
+        var topScores = scores.OrderByDescending(p => p.Kills).Take(10).ToList();
+
+
+        int yPosition = 300;
+        // Ritar varje spelares namn och antal kills
+        foreach (var playerData in topScores)
+        {
+            Raylib.DrawText($"{playerData.Name} - Kills: {playerData.Kills}", 400, yPosition, 20, Color.White);
+            yPosition += 30;
         }
     }
 
@@ -181,7 +183,7 @@ class Program
 
         Raylib.BeginDrawing();
         Raylib.ClearBackground(Color.Black);
-        ShowScoreboard();
+        ShowScoreboard(scores);
         Raylib.DrawText("Press Space to START", (Raylib.GetScreenWidth() - Raylib.MeasureText("Press Space to START", 20)) / 2, Raylib.GetScreenHeight() - 40, 20, Color.White);
         Raylib.EndDrawing();
     }
